@@ -1,71 +1,279 @@
-# Safar — Property Film Studio
+# 🎬 SAFAR — Property Film Studio
 
-Safar turns a property listing and 4–8 photos into a shareable MP4 property film. Each photo gets a different camera move, and scenes blend together. It is a local-first Streamlit app: photos are rendered on your computer; an optional Groq request sends listing text only to create captions. Without a key, the built-in caption templates work offline.
+**Turn property photos into cinematic real estate videos with AI-powered captions and narration.**
 
-For the candidate deliverable checklist, short demo script, approach, and limitations, see [SUBMISSION_GUIDE.md](SUBMISSION_GUIDE.md). For a fuller explanation of the architecture and technologies, see [PROJECT_OVERVIEW.md](PROJECT_OVERVIEW.md). For the AI, libraries, and external music service details, see [MODEL_AND_SERVICES.md](MODEL_AND_SERVICES.md).
+SAFAR is a local-first property video generation application that transforms property listing details and 4–8 photos into a professional, shareable MP4 property film.
 
-## Run on Windows
+It automates camera movements, scene transitions, animated information cards, captions, voice narration, and background music to help real estate agents create engaging property advertisements.
 
-Python 3.12 is the tested version. From PowerShell in this folder:
+---
+
+## ✨ Key Features
+
+- **Photo-to-Video Conversion:** Convert 4–8 property photos into a cinematic video.
+- **Dynamic Camera Movements:** Different zoom and pan effects for individual scenes.
+- **Smooth Transitions:** Professional dissolves between property scenes.
+- **AI-Powered Captions:** Optional Groq integration for generating property captions.
+- **Offline Caption Generation:** Built-in templates work without an API key.
+- **AI Voice Narration:** Generate property narration using Edge TTS.
+- **Animated Information Cards:** Display location, price, property highlights, and enquiry details.
+- **Background Music:** Cinematic background soundtrack with audio fading.
+- **Multiple Video Formats:** Export in landscape (16:9) or vertical (9:16).
+- **HD Video Export:** Choose between 720p and 1080p.
+- **MP4 Download:** Preview and download the generated property film.
+- **Local-First Processing:** Property photos are processed locally on your computer.
+
+---
+
+## 🛠️ Technologies Used
+
+| Technology | Purpose |
+|---|---|
+| Python | Core application logic |
+| Streamlit | User interface |
+| Pillow (PIL) | Image processing and animated text cards |
+| Groq API | Optional AI caption generation |
+| Edge TTS | Voice narration |
+| FFmpeg | Video encoding and audio processing |
+| imageio-ffmpeg | FFmpeg integration |
+| NumPy | Frame and image processing |
+
+---
+
+## ⚙️ How It Works
+
+1. Enter property information such as name, location, price, and highlights.
+2. Upload 4–8 property photographs.
+3. Select the video orientation and resolution.
+4. SAFAR generates captions using local templates or optionally Groq.
+5. The narration service generates voice audio from the property script.
+6. The video renderer applies camera movements, animated cards, and transitions.
+7. FFmpeg combines video, narration, and background music.
+8. Preview and download the final MP4 video.
+
+---
+
+## 🏗️ Project Architecture
+
+```text
+SAFAR/
+│
+├── app.py
+│
+├── src/
+│   ├── validation.py
+│   ├── script_generator.py
+│   └── video_generator.py
+│
+├── assets/
+│   └── safar_travel.mp3
+│
+├── scripts/
+│   ├── create_sample_video.py
+│   └── create_soundtrack.py
+│
+├── tests/
+│
+├── output/
+│
+├── requirements.txt
+├── .env.example
+├── .gitignore
+├── README.md
+├── SUBMISSION_GUIDE.md
+├── PROJECT_OVERVIEW.md
+└── MODEL_AND_SERVICES.md
+```
+
+### Main Components
+
+- `app.py` — Streamlit application and user interface.
+- `validation.py` — Validates uploaded images and listing details.
+- `script_generator.py` — Generates property captions using local templates or Groq.
+- `video_generator.py` — Creates animated scenes, narration, transitions, and the final video.
+- `assets/` — Stores background music and other project assets.
+- `tests/` — Contains automated project tests.
+- `output/` — Stores generated MP4 videos.
+
+---
+
+## 🚀 Installation and Setup
+
+### Requirements
+
+- Python 3.12
+- Windows 10/11
+- Internet connection for optional AI captions and voice narration.
+
+### Step 1: Clone the Repository
+
+```bash
+git clone YOUR_GITHUB_REPOSITORY_URL
+cd SAFAR
+```
+
+### Step 2: Create a Virtual Environment
 
 ```powershell
 py -3.12 -m venv .venv
-.\.venv\Scripts\Activate.ps1
+.venv\Scripts\Activate.ps1
+```
+
+### Step 3: Install Dependencies
+
+```powershell
 python -m pip install --upgrade pip
 pip install -r requirements.txt
+```
+
+### Step 4: Configure Environment Variables
+
+```powershell
 Copy-Item .env.example .env
+```
+
+Add your Groq API key to `.env` if you want AI-generated captions.
+
+```env
+GROQ_API_KEY=your_groq_api_key
+GROQ_MODEL=your_available_model_id
+```
+
+**Note:** Groq integration is optional. SAFAR works with built-in caption templates when no API key is configured.
+
+Never upload your `.env` file or expose API keys publicly.
+
+### Step 5: Run the Application
+
+```powershell
 streamlit run app.py
 ```
 
-Open the local address shown by Streamlit (normally `http://localhost:8501`). To stop the server, press Ctrl+C in that PowerShell window. Leave `GROQ_API_KEY` blank for offline use. To enable Groq captions, add a key to `.env`; do not share or commit that file. `GROQ_MODEL` selects a model ID available to your account. If credentials, the selected model, connectivity, or rate limits cause an error, the app quietly uses the local templates.
+Open the local URL displayed in your terminal, normally:
 
-## Make a video
+`http://localhost:8501`
 
-1. Enter a fictional or real listing name and location. Add the price, contact call to action, and verified highlights if available.
-2. Select 4–8 JPG, PNG, or WEBP photos (up to 15 MB each). The preview order is the video scene order.
-3. Choose landscape (16:9) or vertical (9:16), then create the video.
-4. Preview it in the page and download the MP4. The latest render is also saved to `output/safar_property.mp4`.
+---
 
-Every export opens with a six-second animated SAFAR identity sequence and original cinematic whoosh, then transitions to the first property photo. Narration and its synchronized information card begin after the intro. The renderer creates location, price, scene cards and a closing enquiry panel over smooth camera moves and dissolves. Each spoken sentence has a matching on-screen card timed to that sentence. By default, a configurable male neural voice creates a 14–34 second property segment from the details and up to five highlights. The online TTS service receives only the script text; photos remain local. Turn off the voice cover to export music only. Background music can also be disabled. Choose 1080p or a faster 720p export. The soundtrack is **“Easy Travel_medium 2” by Grand_Project**, from `assets/safar_travel.mp3`; its music level is lowered beneath narration and it fades at the beginning and end. The track is provided by [Pixabay](https://pixabay.com/music/acoustic-group-easy-travel-medium-2-332847/) under the [Pixabay Content License](https://pixabay.com/service/license-summary/); its page marks it as registered with YouTube Content ID. FFmpeg encodes H.264 video with broadly compatible `yuv420p` and AAC audio. Frames are streamed to FFmpeg to keep memory use predictable. Avoid putting sensitive customer information into a third-party AI prompt; captions can be generated locally with the key left blank.
+## 🎥 Sample Output
 
-## Sample listing
+SAFAR generates an MP4 property advertisement featuring:
 
-`src/sample_data/property.json` contains fictional details for **The Fern House** in Baner, Pune. `output/safar_sample.mp4` is a real, playable technical sample made from original vector illustrations, not property photography. It demonstrates motion, transitions, layout, and encoding; use real listing photos for a real advertisement. Recreate it with `python scripts/create_sample_video.py`.
+- Animated SAFAR introduction.
+- Cinematic property photo sequences.
+- Individual camera movements.
+- Smooth scene transitions.
+- Property information cards.
+- Voice narration with synchronized captions.
+- Background music.
+- Final enquiry and contact panel.
 
-## Tests
+A sample technical video is available at:
 
-Run the project checks with:
+`output/safar_sample.mp4`
+
+The sample uses original vector illustrations to demonstrate video rendering and is not actual property photography.
+
+---
+
+## 🧪 Testing
+
+Run the automated test suite:
 
 ```powershell
 python -m unittest discover -s tests -v
 ```
 
-Tests cover required fields, 4/6/8 image counts, malformed and unsupported images, offline captions, AI success and failure paths, changing camera frames, and MP4 decoding in both orientations. They do not exercise a live Groq account or guarantee the external provider is available.
+Tests cover:
 
-## How it works
+- Required listing fields.
+- Image count validation.
+- Unsupported and malformed images.
+- Offline caption generation.
+- AI generation success and failure.
+- Camera movement and frame generation.
+- MP4 decoding in landscape and portrait formats.
 
-- `app.py` provides the listing form, photo previews, status, video preview, and download.
-- `src/validation.py` checks required fields and verifies image contents, format, and size.
-- `src/script_generator.py` creates fact-grounded local captions and can optionally ask Groq for alternate phrasing. Failed requests use the same deterministic templates.
-- `src/video_generator.py` uses Pillow for animated text cards, Edge TTS for configurable male neural narration, and streams frames plus a balanced soundtrack mix through `imageio-ffmpeg` to the bundled FFmpeg encoder. It avoids loading a full video into memory.
-- `scripts/create_soundtrack.py` is an unused earlier experiment that recreates the original plucked-string draft; Safar now uses the Pixabay track listed above.
+Live third-party service availability is not guaranteed by these tests.
 
-The optional provider/model and current model catalog are documented by [Groq's model list](https://console.groq.com/docs/models) and [deprecation notes](https://console.groq.com/docs/deprecations). Model IDs, account access, rate limits, and pricing can change; configure a model available to your account. The baseline workflow has no API dependency or paid subscription requirement.
+---
 
-## Interview walkthrough
+## 🔐 Privacy and Data Handling
 
-**Problem:** Agents often spend time turning listing facts and photos into short social video ads. Safar packages that repetitive production workflow into a small local tool.
+SAFAR follows a local-first processing approach.
 
-**Demo:** Use the fictional Fern House details, choose four property photos, select vertical format, generate, play the result, then download it. Point out that the displayed photo order becomes the scene order. Keep `.env` without a key to demonstrate the reliable no-service path.
+- Property photos are processed locally.
+- Groq receives listing text only when optional AI captions are enabled.
+- The online TTS service receives narration script text.
+- Photos are not uploaded to Groq or the TTS provider.
+- No cloud storage or user account is required.
+- Users can generate captions offline without an API key.
 
-**Technical explanation:** Streamlit handles the browser interface. Pillow validates and prepares photos and draws legible text panels. Optional Groq text generation rewrites only facts supplied in the form; the local template path is deterministic and needs no network. The renderer streams frames to FFmpeg, which writes an H.264 MP4. Errors are caught at the UI boundary and unsupported uploads are rejected before rendering.
+Avoid including sensitive customer information in third-party AI requests.
 
-**Known limits:** Captions and narration use typed details; Safar does not inspect images or verify property facts. Scene order follows upload order and cannot currently be rearranged after upload. Narration requires internet access to the online speech service. The app has no cloud storage or accounts. Groq free access and model availability are subject to provider terms and may change. The local renderer uses CPU and render time depends on image size and hardware.
+---
 
-## Evaluation checklist
+## ⚠️ Limitations
 
-- **Problem and business relevance (20%)** — Listing fields and supplied photos produce a focused property advertisement.
-- **Working implementation (30%)** — Validated uploads, real landscape/vertical MP4 rendering, in-page playback, and download are provided; run the documented tests locally.
-- **AI/ML (20%)** — Optional configurable Groq caption rewriting is grounded in listing facts; offline templates keep the workflow usable without AI.
-- **Code quality (15%)** — UI, validation, caption generation, and rendering are separated; dependencies are pinned; secrets and generated videos are ignored.
-- **Usability and explanation (15%)** — Photo previews, clear errors, progress, fictional sample details, setup steps, and an interview demo script are included.
+- Supports 4–8 images per video.
+- Scene order follows the uploaded photo order.
+- SAFAR does not currently inspect photographs using computer vision.
+- Property facts and highlights must be supplied by the user.
+- Voice narration requires an internet connection.
+- Video rendering uses local CPU resources.
+- Groq model access and rate limits depend on provider availability.
+- The application does not currently provide cloud storage or user authentication.
+
+---
+
+## 🔮 Future Improvements
+
+- Drag-and-drop scene reordering.
+- AI-based property image analysis.
+- Automatic property type detection.
+- Multiple narration voices and languages.
+- Custom branding, logos, and templates.
+- More cinematic transition styles.
+- Cloud-based video rendering.
+- Saved projects and video history.
+- Integration with real estate listing platforms.
+
+---
+
+## 🎯 Project Objective
+
+The objective of SAFAR is to simplify real estate video marketing by converting ordinary property photographs and listing information into engaging cinematic advertisements through automation.
+
+Instead of manually editing every property video, users can generate a complete promotional film through a simple interface.
+
+---
+
+## 👨‍💻 Developer
+
+**Rohan Singh**
+
+AI & Data Science Student
+
+Developed as an AI-powered multimedia automation project.
+
+---
+
+## 📄 Additional Documentation
+
+- `SUBMISSION_GUIDE.md` — Candidate deliverables, demonstration script, approach, and limitations.
+- `PROJECT_OVERVIEW.md` — Architecture and technical explanation.
+- `MODEL_AND_SERVICES.md` — AI models, libraries, and external services.
+
+## 📜 Music Attribution
+
+Background music: **Easy Travel_medium 2 — Grand_Project**
+
+Source: [Pixabay Music](https://pixabay.com/music/acoustic-group-easy-travel-medium-2-332847/)
+
+Used under the [Pixabay Content License](https://pixabay.com/service/license-summary/). The track is registered with YouTube Content ID.
+
+---
+
+**Built with Python, AI, and creativity.**
+
+*SAFAR — Every property has a story. Give it a film.*
