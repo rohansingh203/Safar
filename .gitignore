@@ -1,0 +1,12 @@
+.env
+.venv/
+venv/
+ronee/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.streamlit/secrets.toml
+output/*.mp4
+output/*.jpg
+!output/.gitkeep
+!output/safar_sample.mp4

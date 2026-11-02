@@ -1,0 +1,10 @@
+{
+  "property_name": "The Fern House",
+  "location": "Baner, Pune",
+  "price": "₹1.25 crore",
+  "property_type": "Independent house",
+  "features": ["Three bedrooms", "Private garden", "Recently renovated", "Covered parking"],
+  "contact": "Call Maya at 90000 12345",
+  "fictional": true,
+  "demo_note": "Use fictional details with your own four to eight listing photos."
+}
